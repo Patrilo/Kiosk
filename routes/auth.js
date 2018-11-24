@@ -12,10 +12,8 @@ router.get("/login", (req, res, next) => {
   res.render("auth/login", { message: req.flash("error") });
 });
 
-router.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/",
+router.post("/login", passport.authenticate("local", {
+    successRedirect: "/auth/myProfile",
     failureRedirect: "/auth/login",
     failureFlash: true,
     passReqToCallback: true
@@ -53,7 +51,7 @@ router.post("/signup", (req, res, next) => {
     newUser
       .save()
       .then(() => {
-        res.render("myProfile");
+        res.redirect(307,'/auth/login')
       })
       .catch(err => {
         res.render("auth/signup", { message: "Something went wrong" });
@@ -61,7 +59,7 @@ router.post("/signup", (req, res, next) => {
   });
 });
 
-router.get("/myProfile", ensureLoggedIn("/login"), (req, res) => {
+router.get("/myProfile", ensureLoggedIn("/auth/login"), (req, res) => {
   res.render("auth/myProfile", {
     user: req.user
   });
